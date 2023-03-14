@@ -1,0 +1,51 @@
+name: Generate my CV 
+
+on:
+
+  workflow_dispatch:
+
+jobs:
+
+  generate:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v2
+
+      - name: Generate CV 
+
+        uses: BrightSoftwares/blogpost-tools/latex-cv@main
+
+        with:
+
+          src_folder: /github/workspace/infographics2/fr/
+
+          #dest_folder: /github/workspace/en/_drafts/
+
+      - run: |
+
+          CHANGES_EXIST="$(git status --porcelain | wc -l)"
+
+          echo "There are $CHANGES_EXIST changes to commit"
+
+          if [ "$CHANGES_EXIST" -eq 0 ]; then
+
+            echo "There are no changes to commit"
+
+          else
+
+            echo "Committing changes"
+
+            git config user.name github-actions
+
+            git config user.email github-actions@github.com
+
+            git add .
+
+            git commit -m "generated and changed files"
+
+            git push
+
+          fi
